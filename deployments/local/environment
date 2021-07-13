@@ -1,0 +1,7 @@
+NODE_ENV=development
+
+SERVER_PORT=3001
+CORS_ORIGIN_REGEX=localhost
+AUTH_JWT_SECRET=61d110badadff435edf7a2444348da02
+
+DB_URI=mongodb+srv://dbuser:dbpassword@cluster0.kmrtm.mongodb.net/ehr?retryWrites=true&w=majority

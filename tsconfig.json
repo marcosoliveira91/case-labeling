@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "case-labeling-service": ["case-labeling-service/src"],
+      "case-labeling-app": ["case-labeling-app/src"],
+    }
+  }
+}

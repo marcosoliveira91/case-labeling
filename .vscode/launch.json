@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Chrome",
+      "request": "launch",
+      "type": "pwa-chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/packages/case-labeling-app",
+      "runtimeExecutable": "/Applications/Google Chrome Dev.app/Contents/MacOS/Google Chrome Dev"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Service",
+      "envFile": "${workspaceFolder}/deployments/local/environment",
+      "program": "${workspaceFolder}/packages/case-labeling-service/dist/core/main.js",
+      "preLaunchTask": "npm: build",
+      "cwd": "${workspaceFolder}/packages/case-labeling-service",
+      "outFiles": [
+        "${workspaceFolder}/packages/case-labeling-service/**/*.js"
+      ],
+      "protocol": "inspector",
+      "console": "integratedTerminal"
+    }
+  ]
+}
