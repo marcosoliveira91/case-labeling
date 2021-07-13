@@ -1,5 +1,4 @@
 export interface UserDto {
-  // code: string;
   email: string;
   name: string;
   password: string;
