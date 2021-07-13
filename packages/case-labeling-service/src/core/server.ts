@@ -67,8 +67,4 @@ export class Server {
   addOnErrorHook(handler: HookErrorHandler): void {
     this.instance.setErrorHandler(handler);
   }
-
-  decorate(property: string, value: unknown): void {
-    this.instance.decorate(property, value);
-  }
 }

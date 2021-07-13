@@ -1,9 +1,9 @@
-import config from '../../config';
-import ILogger from '../../shared/logger/logger.interface';
-import Logger from '../../shared/logger/logger';
-import { BaseException } from '../../shared/exceptions/base-exception';
+import config from '../../../config';
+import ILogger from '../../../shared/logger/logger.interface';
+import Logger from '../../../shared/logger/logger';
+import { BaseException } from '../../../shared/exceptions/base-exception';
 import { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
-import { Server } from '../server';
+import { Server } from '../../server';
 
 type ReplyErrorPayload<T extends FastifyError | BaseException> = Pick<T, 'code' | 'message'>;
 

@@ -1,18 +1,7 @@
-import User from '../../shared/database/mongoose/models/user.model';
+import User from '../../../shared/database/mongoose/models/user.model';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { Server } from '../server';
 
-export class Decorators {
-  static bootstrap(server: Server): void {
-    server.decorate('db', {
-      models: {
-        User,
-      },
-    });
-    server.decorate('verifyJWT', Decorators.verifyJWT);
-    server.decorate('verifyCredentials', Decorators.verifyCredentials);
-  }
-
+export class AuthHooks {
   static verifyJWT = async (request: FastifyRequest, reply: FastifyReply<any>): Promise<void> => {
     // const logger: ILogger = Logger.getInstance();
     try {
