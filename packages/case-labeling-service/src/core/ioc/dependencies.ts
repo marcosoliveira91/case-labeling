@@ -58,7 +58,7 @@ const dependencies: ClassDependencies[] = [
   },
   {
     clss: ['IDoctorDecisionService', DoctorDecisionService],
-    dependencies: ['IDoctorDecisionRepository'],
+    dependencies: ['IDoctorDecisionRepository', 'ICaseRepository'],
   },
   {
     clss: ['IDoctorDecisionRepository', DoctorDecisionRepository],

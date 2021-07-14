@@ -5,6 +5,7 @@ import { CaseDAO } from '../../shared/database/mongoose/models/case.model';
 export interface ICaseRepository {
   findAll(query?: Pick<Case, 'isReviewed'>): Promise<Case[]>;
   insertMany(query: Case[]): Promise<Case[]>;
+  update(query: Pick<Case, 'code' | 'isReviewed'>): Promise<Case>;
 }
 
 class CaseRepository implements ICaseRepository {
@@ -37,6 +38,34 @@ class CaseRepository implements ICaseRepository {
     } catch (error) {
       this.logger.error({
         message: 'Error in CaseRepository.insertMany',
+        data: { },
+        error: error as Error,
+      });
+
+      throw error;
+    }
+  }
+
+  async update(query: Pick<Case, 'code' | 'isReviewed'>): Promise<Case> {
+    try {
+      const { code, isReviewed } = query;
+      const filters = { code };
+      const toUpdate = { isReviewed };
+      const withOptions = {
+        new: true,
+      };
+
+      const updated = await CaseDAO.findOneAndUpdate(filters, toUpdate, withOptions).lean();
+
+      if(!updated) {
+        // throw new CaseNotFoundException(code);
+        throw new Error(`Case ${code} not found`);
+      }
+
+      return updated;
+    } catch (error) {
+      this.logger.error({
+        message: 'Error in CaseRepository.update',
         data: { },
         error: error as Error,
       });

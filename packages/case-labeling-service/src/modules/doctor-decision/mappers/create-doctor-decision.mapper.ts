@@ -16,7 +16,11 @@ export class CreateDoctorDecisionMapper {
 
   public static toDto(entity: DoctorDecision): DoctorDecisionDto {
     return {
-      ...entity,
+      code: entity.code,
+      doctorCode: entity.doctorCode,
+      caseCode: entity.caseCode,
+      conditionCode: entity.conditionCode,
+      duration: entity.duration,
     };
   }
 }
