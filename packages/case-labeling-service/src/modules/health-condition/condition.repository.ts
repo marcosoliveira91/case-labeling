@@ -41,7 +41,7 @@ class ConditionRepository implements IConditionRepository {
       return mockConditions ?? [];
     } catch (error) {
       this.logger.error({
-        message: 'Error in AuthRepository.create',
+        message: 'Error in ConditionRepository.create',
         data: { },
         error: error as Error,
       });

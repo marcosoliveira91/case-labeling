@@ -1,9 +1,12 @@
 import AuthController from '../../modules/auth/auth.controller';
 import AuthRepository from '../../modules/auth/auth.repository';
 import AuthService from '../../modules/auth/auth.service';
-import ConditionController from '../../modules/condition/condition.controller';
-import ConditionRepository from '../../modules/condition/condition.repository';
-import ConditionService from '../../modules/condition/condition.service';
+import ConditionController from '../../modules/health-condition/condition.controller';
+import ConditionRepository from '../../modules/health-condition/condition.repository';
+import ConditionService from '../../modules/health-condition/condition.service';
+import DoctorDecisionController from '../../modules/doctor-decision/doctor-decision.controller';
+import DoctorDecisionRepository from '../../modules/doctor-decision/doctor-decision.repository';
+import DoctorDecisionService from '../../modules/doctor-decision/doctor-decision.service';
 import Logger from '../../shared/logger/logger';
 import { ClassDependencies } from './types/index';
 
@@ -32,6 +35,18 @@ const dependencies: ClassDependencies[] = [
   },
   {
     clss: ['IConditionRepository', ConditionRepository],
+    dependencies: ['ILogger'],
+  },
+  {
+    clss: DoctorDecisionController,
+    dependencies: ['IDoctorDecisionService'],
+  },
+  {
+    clss: ['IDoctorDecisionService', DoctorDecisionService],
+    dependencies: ['IDoctorDecisionRepository'],
+  },
+  {
+    clss: ['IDoctorDecisionRepository', DoctorDecisionRepository],
     dependencies: ['ILogger'],
   },
   // {

@@ -17,6 +17,6 @@ const schema = new Schema<HealthCondition>({
   },
 });
 
-const HealthConditionDAO = model<HealthCondition>('HealthCondition', schema);
+const HealthConditionDAO = model<HealthCondition>('Condition', schema);
 
 export { HealthConditionDAO };

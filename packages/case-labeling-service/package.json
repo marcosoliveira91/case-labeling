@@ -70,6 +70,7 @@
     "fastify-healthcheck": "^3.1.0",
     "fastify-plugin": "^3.0.0",
     "fastify-swagger": "^4.8.2",
+    "hashids": "^2.2.8",
     "inversify": "^5.1.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.2",
