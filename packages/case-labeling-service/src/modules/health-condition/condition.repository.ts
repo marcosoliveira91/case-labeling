@@ -1,8 +1,10 @@
 import ILogger from '../../shared/logger/logger.interface';
 import { Condition } from './entities/condition.entity';
+import { HealthConditionDAO } from '../../shared/database/mongoose/models';
 
 export interface IConditionRepository {
   findAll(): Promise<Condition[]>;
+  insertMany(query: Condition[]): Promise<Condition[]>;
 }
 
 class ConditionRepository implements IConditionRepository {
@@ -13,35 +15,32 @@ class ConditionRepository implements IConditionRepository {
 
   async findAll(): Promise<Condition[]> {
     try {
-      // TODO: import from file and save into db
-      // helper.csvToJson(file);
-      // const conditions = [{ cide: 'XPTO', description: 'bla bla' }];
-      // ConditionDAO.insertMany(conditions, () => {}));
+      // For the purposes of this demo, sample data is initially retrieved from
+      // a static data source, i.e.,csv file, and then saved into the db.
+      // This could be also achieved with the help of
+      // any webhook endpoint or http calling a 'conditions microservice', for instance
+      const conditionsFound: Condition[] = await HealthConditionDAO.find().lean() ?? [];
 
-      // TODO: cache request
-      const mockConditions = await Promise.resolve([
-        {code: 'A09',
-          description :'Infectious gastroenteritis and colitis, unspecified'},
-        {code: 'A64',
-          description :	'Unspecified sexually transmitted disease'},
-        {code: 'B300',
-          description :	'Keratoconjunctivitis due to adenovirus'},
-        {code: 'B302',
-          description :	'Viral pharyngoconjunctivitis'},
-        {code: 'B308',
-          description :	'Other viral conjunctivitis'},
-        {code: 'B309',
-          description :	'Viral conjunctivitis, unspecified'},
-        {code: 'B373',
-          description :	'Candidiasis of vulva and vagina'},
-      ] as Condition[]);
-
-      // ConditionDAO.findAll()
-
-      return mockConditions ?? [];
+      return conditionsFound;
     } catch (error) {
       this.logger.error({
-        message: 'Error in ConditionRepository.create',
+        message: 'Error in ConditionRepository.findAll',
+        data: { },
+        error: error as Error,
+      });
+
+      throw error;
+    }
+  }
+
+  async insertMany(query: Condition[]): Promise<Condition[]> {
+    try {
+      const createdConditions: Condition[] = await HealthConditionDAO.insertMany(query) ?? [];
+
+      return createdConditions;
+    } catch (error) {
+      this.logger.error({
+        message: 'Error in ConditionRepository.insertMany',
         data: { },
         error: error as Error,
       });

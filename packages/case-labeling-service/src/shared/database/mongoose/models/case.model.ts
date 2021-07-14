@@ -1,11 +1,12 @@
 import { Schema, model } from 'mongoose';
 
-interface HealthCondition {
+interface Case {
   code: string;
   description: string;
+  isReviewed: boolean;
 }
 
-const ConditionSchema = new Schema<HealthCondition>({
+const CaseSchema = new Schema<Case>({
   code: {
     type: String,
     unique: true,
@@ -15,8 +16,11 @@ const ConditionSchema = new Schema<HealthCondition>({
     type: String,
     required: true,
   },
+  isReviewed: {
+    type: Boolean,
+  },
 });
 
-const HealthConditionDAO = model<HealthCondition>('Condition', ConditionSchema);
+const CaseDAO = model<Case>('Case', CaseSchema);
 
-export { HealthConditionDAO };
+export { CaseDAO };

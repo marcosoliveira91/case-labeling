@@ -1,6 +1,9 @@
 import AuthController from '../../modules/auth/auth.controller';
 import AuthRepository from '../../modules/auth/auth.repository';
 import AuthService from '../../modules/auth/auth.service';
+import CaseController from '../../modules/case/case.controller';
+import CaseRepository from '../../modules/case/case.repository';
+import CaseService from '../../modules/case/case.service';
 import ConditionController from '../../modules/health-condition/condition.controller';
 import ConditionRepository from '../../modules/health-condition/condition.repository';
 import ConditionService from '../../modules/health-condition/condition.service';
@@ -23,6 +26,18 @@ const dependencies: ClassDependencies[] = [
   },
   {
     clss: ['IAuthRepository', AuthRepository],
+    dependencies: ['ILogger'],
+  },
+  {
+    clss: CaseController,
+    dependencies: ['ICaseService'],
+  },
+  {
+    clss: ['ICaseService', CaseService],
+    dependencies: ['ICaseRepository'],
+  },
+  {
+    clss: ['ICaseRepository', CaseRepository],
     dependencies: ['ILogger'],
   },
   {

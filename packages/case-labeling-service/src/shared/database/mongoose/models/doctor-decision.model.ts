@@ -8,7 +8,7 @@ interface DoctorDecision {
   duration: number;
 }
 
-const schema = new Schema<DoctorDecision>({
+const DecisionSchema = new Schema<DoctorDecision>({
   code: {
     type: String,
     unique: true,
@@ -32,6 +32,6 @@ const schema = new Schema<DoctorDecision>({
   },
 });
 
-const DoctorDecisionDAO = model<DoctorDecision>('Decision', schema);
+const DoctorDecisionDAO = model<DoctorDecision>('Decision', DecisionSchema);
 
 export { DoctorDecisionDAO };

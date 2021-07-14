@@ -7,7 +7,7 @@ class ConditionController {
     private readonly conditionService: IConditionService,
   ) {}
 
-  getConditions = async (): Promise<GetConditionsDto> => {
+  getConditions = (): Promise<GetConditionsDto> => {
     return this.conditionService.getConditions();
   }
 }

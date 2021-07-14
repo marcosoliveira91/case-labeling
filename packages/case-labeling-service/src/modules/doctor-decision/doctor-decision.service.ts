@@ -16,6 +16,7 @@ class DecisionService implements IDecisionService {
   async createDoctorDecision(queryDto: CreateDoctorDecisionQueryDto): Promise<DoctorDecisionDto> {
     const queryEntity: DoctorDecision = CreateDoctorDecisionMapper.toDomain(queryDto);
     const doctorDecision: DoctorDecision = await this.doctorDecisionRepository.create(queryEntity);
+    // TODO: this.caseRepository.update(queryDto.caseCode, { isReviewed: true });
 
     return CreateDoctorDecisionMapper.toDto(doctorDecision);
   }
