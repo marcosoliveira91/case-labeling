@@ -14,13 +14,13 @@ export class Routes {
     const caseController = container.get(CaseController);
 
     server.setRoute('post', '/auth/register', authController.register, /* { schema: schemas.registerSchema }*/);
-    server.setRoute('post', '/auth/signin', authController.login, {
+    server.setRoute('post', '/auth/login', authController.login, {
       preHandler: AuthHooks.verifyCredentials,
-      // schema: schemas.signinSchema
+      // schema: schemas.loginSchema
     });
     server.setRoute('post', '/auth/logout', authController.logout, {
       preHandler: AuthHooks.verifyJWT,
-      // schema: schemas.signinSchema
+      // schema: schemas.logoutSchema
     });
 
     server.setRoute('get', '/health-conditions', healthConditionController.getConditions, // TODO: cache request

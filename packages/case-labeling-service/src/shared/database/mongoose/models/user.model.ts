@@ -9,6 +9,7 @@ import {
 } from 'mongoose';
 
 interface IUser {
+  code: string;
   name: string;
   email: string;
   password: string;
@@ -25,6 +26,11 @@ export interface IUserModel extends Model<IUserDocument> {
 }
 
 const UserSchema: Schema<IUserDocument> = new Schema({
+  code: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   email: {
     type: String,
     unique: true,

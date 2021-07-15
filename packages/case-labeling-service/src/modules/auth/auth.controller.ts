@@ -27,6 +27,7 @@ class AuthController {
 
     void reply.send({
       user: {
+        code: authenticatedUser.code,
         name: authenticatedUser.name,
         email: authenticatedUser.email,
         tokens: authenticatedUser.tokens,
@@ -47,6 +48,7 @@ class AuthController {
 
       void reply.send({
         user: {
+          code: loggedOutUser.code,
           name: loggedOutUser.name,
           email: loggedOutUser.email,
           tokens: loggedOutUser.tokens,
