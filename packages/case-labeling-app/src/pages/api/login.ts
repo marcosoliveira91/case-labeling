@@ -1,6 +1,6 @@
 import axios from 'axios';
 import withSession, { NextRequestWithSession, WithSessionType } from '../../lib/session';
-import { User } from '../../interfaces/user.interface';
+import { LoggedInUser } from '../../interfaces/logged-in-user.interface';
 import type { NextApiResponse } from 'next';
 
 type ResponseError = {
@@ -9,10 +9,13 @@ type ResponseError = {
 }
 
 type LoginResponse = {
-  user: User
+  user: {
+    code: string;
+    name: string;
+    email: string;
+    tokens: Array<{ token: string, _id: string }>;
+  }
 }
-
-type LoggedInUser = User & { isLoggedIn: boolean };
 
 type LoginQuery = {
   email: string;
@@ -20,7 +23,7 @@ type LoginQuery = {
 }
 
 
-export const login = async (query: LoginQuery): Promise<LoginResponse> => {
+const login = async (query: LoginQuery): Promise<LoginResponse> => {
   try {
     const api: string = process.env.apiBaseUrl;
     const url = `${api}/auth/login`;
@@ -44,9 +47,17 @@ const handler = (async (req: NextRequestWithSession, res: NextApiResponse<Logged
       password,
     });
 
-    const loggedUser = {
+    const { code, name, tokens } = user;
+    const accessToken = tokens.pop();
+    const loggedUser: LoggedInUser = {
+      code,
+      email,
+      name,
+      accessToken: {
+        id: accessToken._id,
+        token: accessToken.token,
+      }, // in the futue, use deviceId
       isLoggedIn: true,
-      ...user,
     };
 
     req.session.set('user', loggedUser);

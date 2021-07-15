@@ -1,7 +1,8 @@
 import axios from 'axios';
 import withSession, { NextRequestWithSession, WithSessionType } from '../../lib/session';
+import { LoggedOutUser } from '../../interfaces/logged-out-user.interface';
+import { User } from '../../interfaces/user.interface';
 import type { NextApiResponse } from 'next';
-import { User } from 'case-labeling-app/src/interfaces/user.interface';
 
 type ResponseError = {
     statusCode: 500,
@@ -9,14 +10,17 @@ type ResponseError = {
 }
 
 type LogOutResponse = {
-  user: User,
+  user: {
+    code: string;
+    name: string;
+    email: string;
+    tokens: Array<{ token: string, _id: string }>;
+  }
 }
 
 type LogOutQuery = {
   token: string,
 }
-
-type LoggedOutUser = User & { isLoggedIn: boolean };
 
 export const logout = async (query: LogOutQuery): Promise<LogOutResponse> => {
   try {
@@ -37,12 +41,15 @@ export const logout = async (query: LogOutQuery): Promise<LogOutResponse> => {
 
 const handler = (async (req: NextRequestWithSession, res: NextApiResponse<LoggedOutUser | ResponseError>) => {
   try {
-    const { accessToken } = req.session.get('user') as User;
-    const { user } = await logout({ token: accessToken.token });
+    const session: User = req.session.get('user');
+    const { user } = await logout({ token: session.accessToken.token });
 
-    const loggedOutUser = {
+    const { code, name, email } = user;
+    const loggedOutUser: LoggedOutUser = {
+      code,
+      email,
+      name,
       isLoggedIn: false,
-      ...user,
     };
 
     req.session.destroy();

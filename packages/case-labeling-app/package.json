@@ -9,6 +9,7 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.6.2",
     "antd": "^4.16.6",
     "axios": "^0.21.1",
     "next": "latest",

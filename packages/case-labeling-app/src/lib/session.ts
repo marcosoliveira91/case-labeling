@@ -5,12 +5,12 @@ export type NextRequestWithSession = NextApiRequest & { session: Session };
 export type NextHandlerWithSession = (
   req: NextRequestWithSession,
   res: NextApiResponse,
-) => void | Promise<void>;
+) => void | Promise<any>;
 export type WithSessionType = (...args: any[]) => Promise<any>
 
 const cookieOptions: SessionOptions = {
-  password: process.env.SECRET_COOKIE_PASSWORD,
-  cookieName: 'case-labeling-session',
+  password: process.env.secretCookiePassword,
+  cookieName: 'dcr_session',
   cookieOptions: {
     httpOnly: process.env.NODE_ENV === 'production',
     secure: process.env.NODE_ENV === 'production',
@@ -18,7 +18,6 @@ const cookieOptions: SessionOptions = {
 };
 
 const withSession = (requestHandler: NextHandlerWithSession): WithSessionType =>
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   withIronSession(requestHandler, cookieOptions) as (...args: any[]) => Promise<any>;
 
 export default withSession;

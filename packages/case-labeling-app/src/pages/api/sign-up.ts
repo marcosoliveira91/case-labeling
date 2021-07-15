@@ -1,6 +1,6 @@
 import axios from 'axios';
 import withSession, { NextRequestWithSession, WithSessionType } from '../../lib/session';
-import { User } from '../../interfaces/user.interface';
+import { RegisteredUser } from '../../interfaces/registered-user.interface';
 import type { NextApiResponse } from 'next';
 
 type ResponseError = {
@@ -9,10 +9,13 @@ type ResponseError = {
 }
 
 type SignUpResponse = {
-  user: User
+  user: {
+    code: string;
+    name: string;
+    email: string;
+    tokens: Array<{ token: string, _id: string }>;
+  }
 }
-
-type RegisteredUser = User & { isLoggedIn: boolean };
 
 type SignUpQuery = {
   email: string;
@@ -46,9 +49,17 @@ const handler = (async (req: NextRequestWithSession, res: NextApiResponse<Regist
       name,
     });
 
-    const registeredUser = {
+    const { code, tokens } = user;
+    const accessToken = tokens.pop();
+    const registeredUser: RegisteredUser = {
       isLoggedIn: false,
-      ...user,
+      code,
+      name,
+      email,
+      accessToken: {
+        id: accessToken._id,
+        token: accessToken.token,
+      }, // in the futue, use deviceId
     };
 
     req.session.set('user', registeredUser);
