@@ -7,7 +7,6 @@ import { Case } from '../interfaces/case.interface';
 import { CasePanel } from '../components/CasePanel';
 import { Condition } from '../interfaces/condition.interface';
 import { ConditionsPanel } from '../components/ConditionsPanel';
-import { DoctorDecision } from '../interfaces/doctor-decision.interface';
 import { getCases } from './api/cases';
 import { getConditions } from './api/conditions';
 import { GetServerSideProps } from 'next';
@@ -93,7 +92,7 @@ const Home: React.FC<HomeProps> = (props : HomeProps) => {
     const { conditionCode, caseCode } = values;
     const duration = new Date().getTime() - taskStart;
 
-    const response: DoctorDecision = await ApiClient.createDecision({
+    await ApiClient.createDecision({
       caseCode,
       conditionCode,
       duration,
@@ -114,7 +113,7 @@ const Home: React.FC<HomeProps> = (props : HomeProps) => {
       };
     });
 
-    await message.success(`Decision ${response.code} Created`);
+    await message.success('Case Reviewed');
     setTaskStart(() => new Date().getTime());
   };
 
@@ -122,48 +121,50 @@ const Home: React.FC<HomeProps> = (props : HomeProps) => {
     <div className='page-container homepage'>
       <Header withActiveSession={session.exists} withAccount={{ name: session.user.name }} onLogout={onLogout}/>
       { !session.exists && ( <NoAuthFallbackMessage /> )}
-      <div className={styles.mainPanel}>
-        { session.exists && !!caseState.unlabeledCases.length ? (
-          <>
-            <div className={styles.sessionStatsContainer}>
-              <Statistic
-                className={styles.sessionStats}
-                title='Cases to Review'
-                value={caseState.all.length - caseState.unlabeledCases.length}
-                suffix={`/ ${caseState.all.length}`}
-              />
-            </div>
-            <Form
-              form={form}
-              name='globalForm'
-              onFinish={onFinish}
-              className={styles.globalForm}
-            >
-              <Form.Item
-                className={styles.formItem}
-                rules={[{ required: true }]}
-                name='caseCode'
-                initialValue={caseState.current.code}
+      { session.exists && (
+        <div className={styles.mainPanel}>
+          { (caseState?.unlabeledCases.length > 0) ? (
+            <>
+              <div className={styles.sessionStatsContainer}>
+                <Statistic
+                  className={styles.sessionStats}
+                  title='Cases to Review'
+                  value={caseState.all.length - caseState.unlabeledCases.length}
+                  suffix={`/ ${caseState.all.length}`}
+                />
+              </div>
+              <Form
+                form={form}
+                name='globalForm'
+                onFinish={onFinish}
+                className={styles.globalForm}
               >
-                <CasePanel case={caseState.current} />
-              </Form.Item>
-              <Form.Item
-                className={styles.formItem}
-                rules={[{ required: true }]}
-                name='conditionCode'
-              >
-                <ConditionsPanel conditions={conditions} onChange={onConditionChange} value={conditionValue}/>
-              </Form.Item>
-              <Form.Item>
-                <div className={styles.buttonWrapper}>
-                  <Button className={styles.nextCaseButton} type='primary' htmlType='submit' size={'large'}>Next Case</Button>
-                </div>
-              </Form.Item>
-            </Form>
-          </>
-        ) : <NoCasesFallbackMessage />
-        }
-      </div>
+                <Form.Item
+                  className={styles.formItem}
+                  rules={[{ required: true }]}
+                  name='caseCode'
+                  initialValue={caseState.current.code}
+                >
+                  <CasePanel case={caseState.current} />
+                </Form.Item>
+                <Form.Item
+                  className={styles.formItem}
+                  rules={[{ required: true }]}
+                  name='conditionCode'
+                >
+                  <ConditionsPanel conditions={conditions} onChange={onConditionChange} value={conditionValue}/>
+                </Form.Item>
+                <Form.Item>
+                  <div className={styles.buttonWrapper}>
+                    <Button className={styles.nextCaseButton} type='primary' htmlType='submit' size={'large'}>Next Case</Button>
+                  </div>
+                </Form.Item>
+              </Form>
+            </>
+          ) : <NoCasesFallbackMessage />
+          }
+        </div>
+      )}
     </div>
   );
 };

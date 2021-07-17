@@ -1,0 +1,16 @@
+.messageContainer {
+  margin: 50px auto;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  .title {
+    align-self: center;
+  }
+
+  .text {
+    font-size: 1rem;
+    font-weight: 400;
+    align-self: center;
+  }
+}

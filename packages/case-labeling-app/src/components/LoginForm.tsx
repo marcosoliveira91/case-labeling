@@ -28,7 +28,7 @@ const LoginForm: React.FC = () => {
           <b>Authentication Success</b>
           <p>{ `Welcome, Dr.${data.name}!` }</p>
         </>
-      );
+        , 1);
 
       await router.push('/', null, {
         shallow: true,

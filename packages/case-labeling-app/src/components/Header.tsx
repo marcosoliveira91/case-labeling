@@ -1,8 +1,8 @@
 import styles from '../styles/components/Header.module.scss';
 import { Button } from 'antd';
+import { LoginOutlined, UserOutlined } from '@ant-design/icons';
 import { MouseEvent } from 'react';
 import { useRouter } from 'next/router';
-import { UserOutlined } from '@ant-design/icons';
 
 interface HeaderProps {
   withActiveSession: boolean;
@@ -32,17 +32,18 @@ export const Header: React.FC<HeaderProps> = ({ withActiveSession, onLogout, wit
               Log Out
             </Button>
           </div>
+        ) : (
+          <div className={styles.headerContainer}>
+            <p className={styles.headerItem}><LoginOutlined className={styles.loginLogo} /></p>
+            <Button
+              className={`${styles.headerItem} ${styles.loginButton}`}
+              type='link'
+              htmlType='submit'
+              onClick={onClick}>
+                Log In
+            </Button>
+          </div>
         )
-        :
-        <Button
-          className={styles.loginButton}
-          type='link'
-          htmlType='submit'
-          onClick={onClick}
-          size={'small'}
-        >
-          Log In
-        </Button>
       }
     </header>
   );
