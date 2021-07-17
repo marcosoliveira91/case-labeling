@@ -21,7 +21,19 @@ export class ApiDocsGeneratorPlugin {
         tags: [
           {
             name: 'Auth',
-            description: 'Auth related end-points',// TODO:
+            description: 'Auth related end-points',
+          },
+          {
+            name: 'Case',
+            description: 'Case related end-points',
+          },
+          {
+            name: 'Doctor Decision',
+            description: 'Doctor Decision related end-points',
+          },
+          {
+            name: 'Health Condition',
+            description: 'Health Condition related end-points',
           },
         ],
       },

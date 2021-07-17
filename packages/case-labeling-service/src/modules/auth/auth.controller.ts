@@ -21,6 +21,7 @@ class AuthController {
   }
 
   login = async (request: FastifyRequest, reply: FastifyReply<any>): Promise<void> => {
+    // extract to service/repository
     const authenticatedUser = request.user;
 
     await authenticatedUser.generateToken();
