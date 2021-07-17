@@ -2,7 +2,7 @@ import axios from 'axios';
 import withSession, { NextRequestWithSession, WithSessionType } from '../../lib/session';
 import { LoggedOutUser } from '../../interfaces/logged-out-user.interface';
 import { User } from '../../interfaces/user.interface';
-import type { NextApiResponse } from 'next';
+import { NextApiResponse } from 'next';
 
 type ResponseError = {
     statusCode: 500,

@@ -1,13 +1,17 @@
-import 'antd/dist/antd.css';
+import Head from 'next/head';
+import { Layout } from 'antd';
 import '../shared/styles/global.scss';
 import '../shared/styles/vars.scss';
+import 'antd/dist/antd.css';
 
 import type { AppProps } from 'next/app';
-import { Layout } from 'antd';
 
-const WebApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
+const CaseLabelingWebApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <Layout className='layout-app'>
+      <Head>
+        <title>Case Labeling App</title>
+      </Head>
       <Component {...pageProps} />
     </Layout>
 
@@ -26,4 +30,4 @@ const WebApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
 //   return { ...appProps }
 // }
 
-export default WebApp;
+export default CaseLabelingWebApp;

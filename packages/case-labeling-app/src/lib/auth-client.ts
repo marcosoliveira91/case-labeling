@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import axios from 'axios';
 import { LoggedInUser } from '../interfaces/logged-in-user.interface';
 

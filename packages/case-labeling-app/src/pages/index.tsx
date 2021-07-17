@@ -1,79 +1,195 @@
-import Auth from '../lib/auth';
+import ApiClient from '../lib/api-client';
+import Auth from '../lib/auth-client';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import styles from '../styles/pages/index.module.scss';
 import withSession, { NextRequestWithSession } from '../lib/session';
-import { Button, message } from 'antd';
+import { Case } from '../interfaces/case.interface';
+import { CasePanel } from '../components/CasePanel';
+import { Condition } from '../interfaces/condition.interface';
+import { ConditionsPanel } from '../components/ConditionsPanel';
+import { DoctorDecision } from '../interfaces/doctor-decision.interface';
+import { getCases } from './api/cases';
+import { getConditions } from './api/conditions';
 import { GetServerSideProps } from 'next';
-import { Layout } from 'antd';
-import { MouseEvent, useEffect, useState } from 'react';
+import { Header } from '../components/Header';
 import { User } from '../interfaces/user.interface';
-import { useRouter } from 'next/router';
+import {
+  Button,
+  Form,
+  message,
+  Statistic,
+} from 'antd';
+import { NoAuthFallbackMessage } from '../components/NoAuthFallbackMessage';
+import { NoCasesFallbackMessage } from '../components/NoCasesFallbackMessage';
 
-const Home: React.FC<{ user: User }> = (props : { user: User }) => {
-  const noUser = {
+interface HomeProps {
+  user: Pick<User, 'code' | 'name' | 'email'>;
+  cases: Case[];
+  conditions: Condition[];
+}
+
+const Home: React.FC<HomeProps> = (props : HomeProps) => {
+  const { user, cases = [], conditions = [] } = props;
+  const userInitialState = {
     code: '',
     name: '',
     email: '',
-    accessToken: {},
   };
-  const router = useRouter();
-  const [user, setUser] = useState(props.user ? props.user : noUser);
-  const [sessionExists, setSessionExists] = useState(!!user?.email);
+  const caseInitialState = {
+    code: '',
+    description: '',
+    isReviewed: false,
+  };
+
+  const [session, setSession] = useState(() => {
+    const account = user ? user : userInitialState;
+
+    return {
+      user: account,
+      exists: !!account?.code,
+    };
+  });
+
+  const [caseState, setCaseState] = useState(() => {
+    const all: Case[] = cases;
+    const unlabeledCases: Case[] = all.filter(c => c.isReviewed === false);
+    const current: Case = unlabeledCases.length ? unlabeledCases[unlabeledCases.length - 1] : caseInitialState;
+
+    return {
+      all,
+      unlabeledCases,
+      current,
+    };
+  });
+
+  useEffect(() => {
+    // acts as a callback for when 'caseState' changes
+    form.setFieldsValue({ caseCode: caseState.current.code });
+  }, [caseState]);
+
+  const [conditionValue, setConditionValue] = useState('');
+  const [taskStart, setTaskStart] = useState(() => new Date().getTime());
+  const [form] = Form.useForm();
 
   const onLogout = async (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    await Auth.logout();
+    void await Auth.logout();
     void message.success(
       <>
-        <b>Logout Success</b>
         <p>See you soon!</p>
       </>
     );
-    setUser(noUser);
-    setSessionExists(false);
+    setSession(() => ({
+      user: userInitialState,
+      exists: false,
+    }));
   };
 
-  useEffect(() => {
-    if (!(user.code)) {
-      void router.push('/login', null, { shallow: true });
-    }
-  }, [user]);
+  const onConditionChange = (value: string) => {
+    setConditionValue(value);
+  };
+
+  const onFinish = async (values: Record<string, string>): Promise<void> => {
+    const { conditionCode, caseCode } = values;
+    const duration = new Date().getTime() - taskStart;
+
+    const response: DoctorDecision = await ApiClient.createDecision({
+      caseCode,
+      conditionCode,
+      duration,
+    });
+
+    setCaseState((prevState) => {
+      const updatedAll: Case[] = prevState.all.map(_case => _case.code === caseCode ?
+        {..._case,
+          isReviewed: true,
+        } : _case);
+      const updatedUnlabeledCases: Case[] = updatedAll.filter(c => !c.isReviewed);
+      const next: Case = updatedUnlabeledCases.length ? updatedUnlabeledCases[updatedUnlabeledCases.length - 1] : caseInitialState;
+
+      return {
+        all: updatedAll,
+        unlabeledCases: updatedUnlabeledCases,
+        current: next,
+      };
+    });
+
+    await message.success(`Decision ${response.code} Created`);
+    setTaskStart(() => new Date().getTime());
+  };
 
   return (
     <div className='page-container homepage'>
-      <Layout.Content className={styles.homeContent}>
-        <h1>Doctor Case Review </h1>
-        <p>doctorcasereview.gyant.com</p>
-        <br/>
-        { sessionExists ?
+      <Header withActiveSession={session.exists} withAccount={{ name: session.user.name }} onLogout={onLogout}/>
+      { !session.exists && ( <NoAuthFallbackMessage /> )}
+      <div className={styles.mainPanel}>
+        { session.exists && !!caseState.unlabeledCases.length ? (
           <>
-            <span>
-              <b>Logged in as: </b>
-              <p>Dr.{user.name}</p>
-              {/* <Link href='/api/logout'>
-                <a>Logout</a>
-              </Link> */}
-              <Button type="link" htmlType='submit' onClick={onLogout}>Logout</Button>
-            </span>
+            <div className={styles.sessionStats}>
+              <Statistic
+                title='Cases to Review'
+                value={caseState.all.length - caseState.unlabeledCases.length}
+                suffix={`/ ${caseState.all.length}`}
+              />
+            </div>
+            <Form
+              form={form}
+              name='globalForm'
+              onFinish={onFinish}
+              className={styles.globalForm}
+            >
+              <Form.Item
+                className={styles.formItem}
+                rules={[{ required: true }]}
+                name='caseCode'
+                initialValue={caseState.current.code}
+              >
+                <CasePanel case={caseState.current} />
+              </Form.Item>
+              <Form.Item
+                className={styles.formItem}
+                rules={[{ required: true }]}
+                name='conditionCode'
+              >
+                <ConditionsPanel conditions={conditions} onChange={onConditionChange} value={conditionValue}/>
+              </Form.Item>
+              <Form.Item>
+                <Button className={styles.nextCaseButton} type='primary' htmlType='submit' size={'large'}>Next Case</Button>
+              </Form.Item>
+            </Form>
           </>
-          :
-          <p>Redirecting to login page</p>
+        ) : <NoCasesFallbackMessage />
         }
-
-      </Layout.Content>
+      </div>
     </div>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<{ user: User }> = withSession(
+export const getServerSideProps: GetServerSideProps<HomeProps> = withSession(
   async ({ req, _res }: any) => {
 
-    const currentUser = (req as NextRequestWithSession).session.get<User>('user');
+    const { code, email, name, accessToken}: User = (req as NextRequestWithSession).session.get<User>('user');
 
-    return Promise.resolve({
+    if(!code) {
+      return {
+        props: {},
+      };
+    }
+
+    const { cases } = await getCases({ token: (accessToken).token});
+    const { conditions } = await getConditions({ token: accessToken.token });
+
+    return {
       props: {
-        ...(currentUser && { user : currentUser }),
+        user: {
+          code,
+          email,
+          name,
+        },
+        cases,
+        conditions,
       },
-    });
+    };
   }
 );
 

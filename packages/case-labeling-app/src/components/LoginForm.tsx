@@ -1,4 +1,4 @@
-import Auth from '../lib/auth';
+import Auth from '../lib/auth-client';
 import styles from '../styles/components/LoginForm.module.scss';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { message } from 'antd';
@@ -41,7 +41,6 @@ const LoginForm: React.FC = () => {
         </>
       );
     }
-
   };
 
   return (
