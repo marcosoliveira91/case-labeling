@@ -1,4 +1,3 @@
-import styles from '../styles/components/ConditionsPanel.module.scss';
 import { Select } from 'antd';
 import { Condition } from '../interfaces/condition.interface';
 
