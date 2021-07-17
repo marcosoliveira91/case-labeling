@@ -11,9 +11,9 @@ services:
     image: mongo
     restart: always
     environment:
-      MONGO_INITDB_DATABASE: caselabelingdb
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: test
+      MONGO_INITDB_DATABASE: ehr
+      MONGO_INITDB_ROOT_USERNAME: dbuser
+      MONGO_INITDB_ROOT_PASSWORD: dbpassword
     ports:
       - 27017:27017
     volumes:
