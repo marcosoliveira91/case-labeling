@@ -1,6 +1,12 @@
 import pino, { Logger as PinoLogger } from 'pino';
-import ILogger from './logger.interface';
-import * as messages from './messages';
+import { InfoMessage, ErrorMessage } from './messages';
+
+export interface ILogger {
+  debug<T>(msg: InfoMessage<T>): void;
+  info<T>(msg: InfoMessage<T>): void;
+  warn<T>(msg: InfoMessage<T>): void;
+  error<T>(msg: ErrorMessage<T>): void;
+}
 
 class Logger implements ILogger {
   private static instance: Logger;
@@ -37,7 +43,7 @@ class Logger implements ILogger {
     return Logger.instance;
   }
 
-  public debug<T>({ message, data }: messages.InfoMessage<T>): void {
+  public debug<T>({ message, data }: InfoMessage<T>): void {
     const log = {
       message,
       data,
@@ -47,7 +53,7 @@ class Logger implements ILogger {
     this.consoleLogger.debug(log);
   }
 
-  public info<T>({ message, data }: messages.InfoMessage<T>): void {
+  public info<T>({ message, data }: InfoMessage<T>): void {
     const log = {
       message,
       data,
@@ -57,7 +63,7 @@ class Logger implements ILogger {
     this.consoleLogger.info(log);
   }
 
-  public warn<T>({ message, data }: messages.InfoMessage<T>): void {
+  public warn<T>({ message, data }: InfoMessage<T>): void {
     const log = {
       message,
       data,
@@ -67,7 +73,7 @@ class Logger implements ILogger {
     this.consoleLogger.warn(log);
   }
 
-  public error<T>({ message, data, error}: messages.ErrorMessage<T>): void {
+  public error<T>({ message, data, error}: ErrorMessage<T>): void {
     const log = {
       message,
       data,

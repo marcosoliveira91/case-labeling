@@ -15,7 +15,7 @@
       "name": "Debug Service",
       "envFile": "${workspaceFolder}/deployments/local/environment",
       "program": "${workspaceFolder}/packages/case-labeling-service/dist/core/main.js",
-      "preLaunchTask": "npm: build",
+      "preLaunchTask": "build",
       "cwd": "${workspaceFolder}/packages/case-labeling-service",
       "outFiles": [
         "${workspaceFolder}/packages/case-labeling-service/**/*.js"

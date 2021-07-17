@@ -1,0 +1,30 @@
+.panelContent {
+  width: 100%;
+
+  .label {
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+   }
+
+   .refLabel {
+     display: inline-block;
+   }
+
+   .value {
+    font-weight: lighter;
+    text-align: justify;
+    text-justify: inter-word;
+    font-size: 0.875rem;
+   }
+
+   .refValue {
+    padding-left: 8px;
+    font-size: 0.8rem;
+    display: inline-block;
+  }
+}
+
+.row {
+  margin: 10px auto;
+}

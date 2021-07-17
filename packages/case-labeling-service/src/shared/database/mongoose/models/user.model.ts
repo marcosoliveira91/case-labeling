@@ -1,4 +1,5 @@
 import config from '../../../../config';
+import { AccessTokenException, AuthenticationException } from '../../../exceptions';
 import { compare, hash } from 'bcryptjs';
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
 import {
@@ -9,6 +10,7 @@ import {
 } from 'mongoose';
 
 interface IUser {
+  code: string;
   name: string;
   email: string;
   password: string;
@@ -25,6 +27,11 @@ export interface IUserModel extends Model<IUserDocument> {
 }
 
 const UserSchema: Schema<IUserDocument> = new Schema({
+  code: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   email: {
     type: String,
     unique: true,
@@ -62,7 +69,7 @@ UserSchema.pre<IUserDocument>('save', async function save() {
 /** Custom method for token generation */
 UserSchema.methods.generateToken = async function(){
   const secret: string = config.get().auth.jwt.secret;
-  const token: string = sign({ _id: String(this._id) }, secret, { expiresIn: '24h' });
+  const token: string = sign({ _id: String(this._id) }, secret, { expiresIn: '72h' });
 
   this.tokens = [...this.tokens, { token }];
   await this.save();
@@ -76,13 +83,13 @@ UserSchema.statics.findByToken = async function(token: string) {
 
   try {
     if (!token) {
-      return new Error('Missing token header');
+      throw new AccessTokenException('Missing token header');
     }
     const secret: string = config.get().auth.jwt.secret;
 
     decodedToken = verify(token, secret) as JwtPayload;
   } catch (error) {
-    return error as Error;
+    throw new AccessTokenException((error as Error).message);
   }
 
   const user: IUser | null = await User.findOne({
@@ -98,13 +105,13 @@ UserSchema.statics.findByCredentials = async function (email: string, password: 
   const user: IUser | null = await User.findOne({ email });
 
   if (!user) {
-    throw new Error('Unable to login. Email not found!');
+    throw new AuthenticationException('Unable to login. Email not found');
   }
 
   const isMatch = await compare(password, String(user.password));
 
   if (!isMatch) {
-    throw new Error('Unable to login. Wrong Password!');
+    throw new AuthenticationException('Unable to login. Wrong Password');
   }
 
   return user;

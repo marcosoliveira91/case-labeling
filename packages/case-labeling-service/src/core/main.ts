@@ -7,13 +7,12 @@ import {
   CorsPlugin,
 } from './bootstrap/plugins';
 import { DI } from './bootstrap/di';
-import { Hooks } from './bootstrap/hooks';
+import { Hooks } from './bootstrap/hooks/hooks';
 import { IConfig } from '../config/config.interface';
 import { IocContainer } from './ioc/container';
 import { Routes } from './bootstrap/routes';
 import { Server } from './server';
 import 'reflect-metadata';
-import { Decorators } from './bootstrap/decorators';
 
 const main = async () => {
   const configuration: IConfig = config.get();
@@ -24,7 +23,6 @@ const main = async () => {
   DI.bootstrap(iocContainer);
 
   /* Bootstrap Server */
-  Decorators.bootstrap(server);
   ApiDocsGeneratorPlugin.bootstrap(server, configuration.env !== 'production');
   ApiHealthCheckPlugin.bootstrap(server);
   CorsPlugin.bootstrap(server);

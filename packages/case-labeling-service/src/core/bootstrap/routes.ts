@@ -1,93 +1,48 @@
-import User from '../../shared/database/mongoose/models/user.model';
-import { Decorators } from './decorators';
+import * as schemas from '../route-schemas';
+import AuthController from '../../modules/auth/auth.controller';
+import CaseController from '../../modules/case/case.controller';
+import DoctorDecisionController from '../../modules/doctor-decision/doctor-decision.controller';
+import HealthConditionController from '../../modules/health-condition/condition.controller';
+import { AuthHooks } from './hooks/auth-hooks';
 import { IocContainer } from '../ioc/container';
 import { Server } from '../server';
 
 export class Routes {
-  static bootstrap(server: Server, _container: IocContainer): void {
-    server.setRoute('post', '/register',
-      async (req, reply) => {
-        const user = new User(req.body);
+  static bootstrap(server: Server, container: IocContainer): void {
+    const authController = container.get(AuthController);
+    const healthConditionController = container.get(HealthConditionController);
+    const doctorDecisionController = container.get(DoctorDecisionController);
+    const caseController = container.get(CaseController);
 
-        try {
-          await user.save();
+    server.setRoute('post', '/auth/register', authController.register, { schema: schemas.registerSchema });
+    server.setRoute('post', '/auth/login', authController.login, {
+      preHandler: AuthHooks.verifyCredentials,
+      schema: schemas.loginSchema,
+    });
+    server.setRoute('post', '/auth/logout', authController.logout, {
+      preHandler: AuthHooks.verifyJWT,
+      schema: schemas.logoutSchema,
+    });
 
-          // generates the token when user registers
-          await user.generateToken();
-
-          void reply.status(201).send({
-            status: 'User registration succeeded',
-            user: {
-              email: user.email,
-              name: user.name,
-              tokens: user.tokens,
-            },
-          });
-        } catch (error) {
-          void reply.status(400).send(error);
-        }
-      });
-
-    server.setRoute('post', '/login',
-      async (req, reply) => {
-        await req.user.generateToken();
-        const user = req.user;
-
-        void reply.send({
-          status: 'User authentication succeeded',
-          user: {
-            name: user.name,
-            email: user.email,
-            tokens: user.tokens,
-          },
-        });
-      },
+    // cachable request
+    server.setRoute('get', '/health-conditions', healthConditionController.getConditions,
       {
-        preHandler: Decorators.verifyCredentials,
-      });
-
-    server.setRoute('post', '/logout',
-      async (req, reply) => {
-        try {
-          req.user.tokens = req.user.tokens.filter((token) => {
-            return token.token !== req.token;
-          });
-          const user = await req.user.save();
-
-          void reply.send({
-            status: 'User loggout succeeded',
-            user: {
-              name: user.name,
-              email: user.email,
-              tokens: user.tokens,
-            },
-          });
-        } catch (error) {
-          void reply.status(500).send();
-        }
-      },
-      {
-        preHandler: Decorators.verifyJWT,
-      });
-
-    server.setRoute('post', '/profile',
-      async (req, reply) => {
-        void reply.send({
-          status: 'Authenticated!',
-          user: req.user,
-        });
-      },
-      {
-        preHandler: Decorators.verifyJWT,
+        preHandler: AuthHooks.verifyJWT,
+        schema: schemas.getConditionsSchema,
       }
     );
 
-    server.setRoute('get', '/ping',
-      async (req, reply) => {
-        void reply.send({ ping: 'pong' });
-      },
+    server.setRoute('post', '/doctor-decisions', doctorDecisionController.createDoctorDecision,
       {
-        preHandler: Decorators.verifyJWT,
+        preHandler: AuthHooks.verifyJWT,
+        schema: schemas.createDoctorDecisionSchema,
+      }
+    );
+
+    server.setRoute('get', '/cases', caseController.getNonReviewedCases,
+      {
+        preHandler: AuthHooks.verifyJWT,
+        schema: schemas.getNonReviewedCases,
       }
     );
   }

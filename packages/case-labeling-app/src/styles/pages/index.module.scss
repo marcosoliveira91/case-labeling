@@ -1,9 +1,31 @@
+@import '../../shared/styles/vars.scss';
+
 .homeContent {
   height: 100%;
-  margin-top: 50px;
+  margin: 0px auto;
 }
 
-.welcomeMessage {
+.mainPanel {
+  min-height: 60vh;
+  height: fit-content;
+  border: 1px solid $border-color;
+  box-shadow: 0px 3px 4px rgba(153, 155, 168, 0.15);
+  border-radius: 8px;
   padding: 50px;
+  box-sizing: content-box;
 }
 
+.globalForm {
+  .buttonWrapper {
+    padding-top: 50px;
+    box-sizing: content-box;
+    display: flex;
+    justify-content: right;
+  }
+}
+
+.sessionStatsContainer {
+  display: flex;
+  justify-content: flex-end;
+  text-align: center;  
+}
