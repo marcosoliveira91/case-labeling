@@ -15,31 +15,33 @@ class CaseService implements ICaseService {
   ) {}
 
   async getNonReviewedCases(): Promise<GetNonReviewedCasesDto> {
-    let cases: Case[] = await this.caseRepository.findAll({ isReviewed: false });
+    let cases: Case[] = await this.caseRepository.findAll();
 
     if(!cases?.length) {
+    /**
+     * For the purposes of this demo, sample data
+     * is being retrieved from a static data source (.txt files).
+     * This could be achieved with webhooks, for instance,
+     * or by calling any api client that would fetch data
+     * from another microservice
+     *  eg.: await this.apiClient.cases.getNonReviewed();
+     */
       const entities = await this.getCasesFromReadModel();
 
       cases = await this.caseRepository.insertMany(entities);
     }
 
-    return GetNonReviewedCasesMapper.toDTO(cases);
+    const nonReviewedCases = cases.filter(el => !el.isReviewed);
+
+    return GetNonReviewedCasesMapper.toDTO(nonReviewedCases);
   }
 
   private async getCasesFromReadModel(): Promise<Case[]> {
-    /**
-     * For the purposes of this demo, sample data
-     * is being retrieved from a static data source (.txt files).
-     * Alternatively, this could be also achieved calling
-     * a simple api client that would fetch data
-     * from another 'cases microservice'
-     *  eg.: await this.apiClient.cases.getNonReviewed();
-     */
     const dirPath: string = path.resolve(__dirname, '../../shared/database/assets/cases');
     const jsonData = await utils.parseTxt(dirPath);
 
     const cases: Case[] = jsonData.map(jsonObj => ({
-      code: jsonObj.name,
+      code: utils.generateReadableCode({ salt: jsonObj.name }),
       description: jsonObj.content,
       isReviewed: false,
     }));

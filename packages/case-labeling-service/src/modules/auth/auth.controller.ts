@@ -37,12 +37,12 @@ class AuthController {
 
   logout = async (request: FastifyRequest, reply: FastifyReply<any>): Promise<void> => {
     try {
-      // TODO: extract to service/repository
-      const updatedTokens = request.user.tokens.filter(({ token }) => {
+      // extract to service/repository
+      const updatedTokens = request.user?.tokens?.filter(({ token }) => {
         return token !== request.token;
       });
 
-      request.user.tokens = updatedTokens;
+      request.user.tokens = updatedTokens ?? [];
 
       const loggedOutUser = await request.user.save();
 

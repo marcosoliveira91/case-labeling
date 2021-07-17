@@ -12,6 +12,8 @@ import { getCases } from './api/cases';
 import { getConditions } from './api/conditions';
 import { GetServerSideProps } from 'next';
 import { Header } from '../components/Header';
+import { NoAuthFallbackMessage } from '../components/NoAuthFallbackMessage';
+import { NoCasesFallbackMessage } from '../components/NoCasesFallbackMessage';
 import { User } from '../interfaces/user.interface';
 import {
   Button,
@@ -19,8 +21,6 @@ import {
   message,
   Statistic,
 } from 'antd';
-import { NoAuthFallbackMessage } from '../components/NoAuthFallbackMessage';
-import { NoCasesFallbackMessage } from '../components/NoCasesFallbackMessage';
 
 interface HomeProps {
   user: Pick<User, 'code' | 'name' | 'email'>;
@@ -125,8 +125,9 @@ const Home: React.FC<HomeProps> = (props : HomeProps) => {
       <div className={styles.mainPanel}>
         { session.exists && !!caseState.unlabeledCases.length ? (
           <>
-            <div className={styles.sessionStats}>
+            <div className={styles.sessionStatsContainer}>
               <Statistic
+                className={styles.sessionStats}
                 title='Cases to Review'
                 value={caseState.all.length - caseState.unlabeledCases.length}
                 suffix={`/ ${caseState.all.length}`}
@@ -154,7 +155,9 @@ const Home: React.FC<HomeProps> = (props : HomeProps) => {
                 <ConditionsPanel conditions={conditions} onChange={onConditionChange} value={conditionValue}/>
               </Form.Item>
               <Form.Item>
-                <Button className={styles.nextCaseButton} type='primary' htmlType='submit' size={'large'}>Next Case</Button>
+                <div className={styles.buttonWrapper}>
+                  <Button className={styles.nextCaseButton} type='primary' htmlType='submit' size={'large'}>Next Case</Button>
+                </div>
               </Form.Item>
             </Form>
           </>
@@ -167,15 +170,15 @@ const Home: React.FC<HomeProps> = (props : HomeProps) => {
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = withSession(
   async ({ req, _res }: any) => {
+    const account: User = (req as NextRequestWithSession)?.session.get<User>('user');
 
-    const { code, email, name, accessToken}: User = (req as NextRequestWithSession).session.get<User>('user');
-
-    if(!code) {
+    if(!account) {
       return {
         props: {},
       };
     }
 
+    const { code, email, name, accessToken } = account;
     const { cases } = await getCases({ token: (accessToken).token});
     const { conditions } = await getConditions({ token: accessToken.token });
 

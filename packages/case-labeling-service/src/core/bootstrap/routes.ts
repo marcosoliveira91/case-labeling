@@ -23,23 +23,24 @@ export class Routes {
       // schema: schemas.logoutSchema
     });
 
-    server.setRoute('get', '/health-conditions', healthConditionController.getConditions, // TODO: cache request
+    // cachable request
+    server.setRoute('get', '/health-conditions', healthConditionController.getConditions,
       {
-        // preHandler: AuthHooks.verifyJWT,
+        preHandler: AuthHooks.verifyJWT,
         // schema: schemas.getConditionsSchema
       }
     );
 
     server.setRoute('post', '/doctor-decisions', doctorDecisionController.createDoctorDecision,
       {
-        // preHandler: AuthHooks.verifyJWT,
+        preHandler: AuthHooks.verifyJWT,
         // schema: schemas.createDoctorDecisionSchema
       }
     );
 
     server.setRoute('get', '/cases', caseController.getNonReviewedCases,
       {
-        // preHandler: AuthHooks.verifyJWT,
+        preHandler: AuthHooks.verifyJWT,
         // schema: schemas.getNonReviewedCasesSchema
       }
     );

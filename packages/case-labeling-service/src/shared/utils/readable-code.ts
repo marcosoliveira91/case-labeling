@@ -1,8 +1,14 @@
 import Hashids from 'hashids/cjs';
 
-const generateReadableCode = (salt: string, encoder?: number): string => {
+export type GenerateReadbleCodeProps = {
+  salt: string;
+  encoder?: number;
+  length?: number;
+};
+
+const generateReadableCode = ({ salt, encoder, length }: GenerateReadbleCodeProps): string => {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const hash: Hashids = new Hashids(salt, 10, alphabet);
+  const hash: Hashids = new Hashids(salt, length, alphabet);
 
   return hash.encode(encoder ?? new Date().getTime());
 };

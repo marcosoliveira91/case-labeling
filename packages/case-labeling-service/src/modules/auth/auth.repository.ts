@@ -1,4 +1,4 @@
-import ILogger from '../../shared/logger/logger.interface';
+import { ILogger } from '../../shared/logger/logger';
 import UserDAO from '../../shared/database/mongoose/models/user.model';
 import { User } from './entities/user.entity';
 

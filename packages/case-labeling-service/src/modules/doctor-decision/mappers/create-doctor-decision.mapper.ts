@@ -6,10 +6,10 @@ import { DoctorDecisionDto } from '../dtos/doctor-decision.dto';
 export class CreateDoctorDecisionMapper {
 
   public static toDomain(dto: CreateDoctorDecisionQueryDto): DoctorDecision {
-    const salt = `${dto.doctorCode}:${dto.caseCode}:${dto.conditionCode}`;
-
     return {
-      code: utils.generateReadableCode(salt, salt.length),
+      code: utils.generateReadableCode({
+        salt: `${dto.doctorCode}:${dto.caseCode}:${dto.conditionCode}`,
+      }),
       ...dto,
     };
   }

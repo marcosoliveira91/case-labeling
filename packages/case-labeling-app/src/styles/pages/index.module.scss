@@ -6,7 +6,8 @@
 }
 
 .mainPanel {
-  height: 60vh;
+  min-height: 60vh;
+  height: fit-content;
   border: 1px solid $border-color;
   box-shadow: 0px 3px 4px rgba(153, 155, 168, 0.15);
   border-radius: 8px;
@@ -15,14 +16,16 @@
 }
 
 .globalForm {
-  // height: 60vh;
-  // border: 1px solid $border-color;
-  // box-shadow: 0px 3px 4px rgba(153, 155, 168, 0.15);
-  // border-radius: 8px;
-  // padding: 50px;
-  // box-sizing: content-box;
-
-  .nextCaseButton {
-    justify-self: flex-end;
+  .buttonWrapper {
+    padding-top: 50px;
+    box-sizing: content-box;
+    display: flex;
+    justify-content: right;
   }
+}
+
+.sessionStatsContainer {
+  display: flex;
+  justify-content: flex-end;
+  text-align: center;  
 }

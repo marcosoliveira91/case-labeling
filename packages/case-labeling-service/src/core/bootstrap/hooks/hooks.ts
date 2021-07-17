@@ -1,7 +1,12 @@
 import config from '../../../config';
-import ILogger from '../../../shared/logger/logger.interface';
-import Logger from '../../../shared/logger/logger';
-import { BaseException } from '../../../shared/exceptions/base-exception';
+import Logger, { ILogger } from '../../../shared/logger/logger';
+import {
+  AccessTokenException,
+  AuthenticationException,
+  BaseException,
+  CaseNotFoundException,
+  UnprocessableDecisionException,
+} from '../../../shared/exceptions';
 import { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import { Server } from '../../server';
 
@@ -81,9 +86,17 @@ export class Hooks {
   };
 
   private static handleBaseExceptionReply(error: BaseException, reply: FastifyReply<any>): ReplyErrorPayload<BaseException> {
-    /** domain/app exceptions that require status code updates goes here */
     switch (error.constructor) {
-    // TODO: domain/app exceptions that require status code updates goes here
+    case AccessTokenException:
+    case AuthenticationException:
+      void reply.status(401);
+      break;
+    case CaseNotFoundException:
+      void reply.status(404);
+      break;
+    case UnprocessableDecisionException:
+      void reply.status(422);
+      break;
     default:
       void reply.send({
         code: 'INTERNAL_ERROR',

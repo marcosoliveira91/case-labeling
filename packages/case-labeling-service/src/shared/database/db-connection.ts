@@ -1,4 +1,4 @@
-import ILogger from '../logger/logger.interface';
+import { ILogger } from '../logger/logger';
 import Logger from '../logger/logger';
 import mongoose from 'mongoose';
 import { IDBConnectionOptions } from './db-connection.interface';

@@ -7,7 +7,9 @@ export class RegisterUserMapper {
 
   public static toDomain(dto: UserDto): Omit<User, 'tokens'> {
     return {
-      code: generateReadableCode(dto.email),
+      code: generateReadableCode({
+        salt: dto.email,
+      }),
       email: dto.email,
       password: dto.password,
       name: dto.name,

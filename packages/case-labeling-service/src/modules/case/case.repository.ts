@@ -1,6 +1,7 @@
-import ILogger from '../../shared/logger/logger.interface';
 import { Case } from './entities/case.entity';
 import { CaseDAO } from '../../shared/database/mongoose/models/case.model';
+import { CaseNotFoundException } from '../../shared/exceptions';
+import { ILogger } from '../../shared/logger/logger';
 
 export interface ICaseRepository {
   findAll(query?: Pick<Case, 'isReviewed'>): Promise<Case[]>;
@@ -14,9 +15,9 @@ class CaseRepository implements ICaseRepository {
     private readonly logger: ILogger,
   ) {}
 
-  async findAll({ isReviewed = false }: Pick<Case, 'isReviewed'>): Promise<Case[]> {
+  async findAll(query?: Pick<Case, 'isReviewed'>): Promise<Case[]> {
     try {
-      const all = await CaseDAO.find({ isReviewed }).lean() ?? [];
+      const all = await CaseDAO.find({ ...query?.isReviewed && { isReviewed: query.isReviewed }}).lean() ?? [];
 
       return all;
     } catch (error) {
@@ -58,8 +59,7 @@ class CaseRepository implements ICaseRepository {
       const updated = await CaseDAO.findOneAndUpdate(filters, toUpdate, withOptions).lean();
 
       if(!updated) {
-        // throw new CaseNotFoundException(code);
-        throw new Error(`Case ${code} not found`);
+        throw new CaseNotFoundException(code);
       }
 
       return updated;

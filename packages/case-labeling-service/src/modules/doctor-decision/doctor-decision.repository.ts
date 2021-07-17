@@ -1,5 +1,6 @@
+import { UnprocessableDecisionException } from '../../shared/exceptions/unprocessable-decision-exception';
 import { DoctorDecisionDAO } from '../../shared/database/mongoose/models/doctor-decision.model';
-import ILogger from '../../shared/logger/logger.interface';
+import { ILogger } from '../../shared/logger/logger';
 import { DoctorDecision } from './entities/doctor-decision.entity';
 
 export interface IDoctorDecisionRepository {
@@ -17,8 +18,7 @@ class DoctorDecisionRepository implements IDoctorDecisionRepository {
       const found = await DoctorDecisionDAO.findOne({ code: query.code }).lean();
 
       if (found) {
-        // TODO: throw new DecisionAlreadyCreatedException(query.code);
-        throw new Error('Decision already exists');
+        throw new UnprocessableDecisionException('Decision already exists');
       }
 
       const newDecision = new DoctorDecisionDAO(query);

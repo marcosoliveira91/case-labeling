@@ -28,12 +28,11 @@ class ConditionService implements IConditionService {
 
   private async getConditionsFromReadModel(): Promise<Condition[]> {
     /**
-     * For the purposes of this demo, sample data
-     * is being retrieved from a static data source (.csv file).
-     * Alternatively, this could be also achieved calling
-     * a simple api client that would fetch data
-     * from another 'conditions microservice'
-     * eg.: await this.apiClient.conditions.getAll();
+     * For the purposes of this demo, sample data is being retrieved
+     * from a static data source (.csv file).
+     * This could be achieved with webhooks, for instance, or by calling
+     * any api client that would fetch data from another microservice.
+     * Cache strategies could also be used since this is a static list with few/none modifications
      */
     const filePath: string = path.resolve(__dirname, '../../shared/database/assets/conditions/conditions.csv');
     const conditions = await utils.parseCsv(filePath) as Condition[];

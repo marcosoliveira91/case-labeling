@@ -1,4 +1,4 @@
-import ILogger from '../../shared/logger/logger.interface';
+import { ILogger } from '../../shared/logger/logger';
 import { Condition } from './entities/condition.entity';
 import { HealthConditionDAO } from '../../shared/database/mongoose/models';
 
@@ -15,10 +15,6 @@ class ConditionRepository implements IConditionRepository {
 
   async findAll(): Promise<Condition[]> {
     try {
-      // For the purposes of this demo, sample data is initially retrieved from
-      // a static data source, i.e.,csv file, and then saved into the db.
-      // This could be also achieved with the help of
-      // any webhook endpoint or http calling a 'conditions microservice', for instance
       const conditionsFound: Condition[] = await HealthConditionDAO.find().lean() ?? [];
 
       return conditionsFound;

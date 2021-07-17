@@ -42,7 +42,7 @@ export const logout = async (query: LogOutQuery): Promise<LogOutResponse> => {
 const handler = (async (req: NextRequestWithSession, res: NextApiResponse<LoggedOutUser | ResponseError>) => {
   try {
     const session: User = req.session.get('user');
-    const { user } = await logout({ token: session.accessToken.token });
+    const { user } = await logout({ token: session?.accessToken?.token });
 
     const { code, name, email } = user;
     const loggedOutUser: LoggedOutUser = {
